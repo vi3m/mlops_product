@@ -1,0 +1,8 @@
+streamlit
+psycopg2-binary
+mlflow
+ray
+evidently
+pandas
+scikit-learn
+joblib

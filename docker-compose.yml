@@ -1,0 +1,125 @@
+services:
+  postgres:
+    image: postgres
+    container_name: postgres
+    environment:
+      POSTGRES_USER: mlflow
+      POSTGRES_PASSWORD: mlflow
+      POSTGRES_DB: mlflow
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - mlops-network
+
+  mlflow:
+    build:
+      context: ./containers/mlflow
+    container_name: mlflow
+    command: >
+      mlflow server
+      --backend-store-uri postgresql://mlflow:mlflow@postgres:5432/mlflow
+      --default-artifact-root s3://mlflow
+      --host 0.0.0.0
+    environment:
+      # MLFLOW_TRACKING_URI: http://mlflow:5000
+      # BACKEND_STORE_URI: postgresql://mlflow:mlflow@postgres:5432/mlflow
+      # ARTIFACT_STORE_URI: s3://minio:9001/mlflow
+      AWS_ACCESS_KEY_ID: minio
+      AWS_SECRET_ACCESS_KEY: minio123
+      MLFLOW_S3_ENDPOINT_URL: http://minio:9000
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgres
+      - minio
+    networks:
+      - mlops-network
+
+  # mlflow:
+  #   image: ghcr.io/mlflow/mlflow
+  #   command: >
+  #     mlflow server
+  #     --backend-store-uri postgresql://mlflow:mlflow@postgres:5432/mlflow
+  #     --default-artifact-root s3://mlflow
+  #     --host 0.0.0.0
+  #   ports:
+  #     - "5000:5000"
+  #   environment:
+  #     MLFLOW_S3_ENDPOINT_URL: http://minio:9000
+  #     AWS_ACCESS_KEY_ID: minio
+  #     AWS_SECRET_ACCESS_KEY: minio123
+  #   depends_on:
+  #     - postgres
+  #     - minio
+  #   networks:
+  #     - mlops-network
+
+
+  minio:
+    image: minio/minio
+    container_name: minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: minio123
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    networks:
+      - mlops-network
+
+  # streamlit:
+  #   build:
+  #     context: ./streamlit_ui
+  #   container_name: streamlit
+  #   ports:
+  #     - "8501:8501"
+  #   depends_on:
+  #     - mlflow
+  #     - ray
+  #   networks:
+  #     - mlops-network
+
+  ray:
+    build:
+      context: ./containers/ray
+    container_name: ray
+    ports:
+      - "8000:8000"
+      - "8265:8265"
+    networks:
+      - mlops-network
+
+  # evidently:
+  #   build:
+  #     context: ./containers/evidently
+  #   container_name: evidently
+  #   ports:
+  #     - "8502:8502"
+  #   networks:
+  #     - mlops-network
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - mlflow
+    networks:
+      - mlops-network
+
+volumes:
+  postgres_data:
+  minio_data:
+  grafana_data:
+
+networks:
+  mlops-network:
+    driver: bridge
