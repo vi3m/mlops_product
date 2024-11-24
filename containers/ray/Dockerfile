@@ -1,9 +1,10 @@
-FROM python:3.9-slim
+FROM python:3.10.15-slim
 
 WORKDIR /app
 
-RUN pip install -U ray[data,train,tune,serve]
 RUN pip install mlflow
+RUN pip install boto3 psycopg2-binary
+RUN pip install -U ray[data,train,tune,serve]
 
 
 COPY . .

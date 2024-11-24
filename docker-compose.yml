@@ -88,9 +88,15 @@ services:
     build:
       context: ./containers/ray
     container_name: ray
+    environment:
+      AWS_ACCESS_KEY_ID: minio
+      AWS_SECRET_ACCESS_KEY: minio123
+      MLFLOW_S3_ENDPOINT_URL: http://minio:9000
     ports:
       - "8000:8000"
       - "8265:8265"
+    depends_on:
+      - mlflow
     networks:
       - mlops-network
 

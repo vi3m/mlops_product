@@ -1,7 +1,12 @@
+import os
 import mlflow
 from ray import serve
-import pandas as pd
+import numpy as np
 import ray
+
+os.environ['MLFLOW_S3_ENDPOINT_URL']="http://minio:9000"
+os.environ['AWS_ACCESS_KEY_ID']="minio"
+os.environ['AWS_SECRET_ACCESS_KEY']="minio123"
 
 # Constants for MLflow
 MLFLOW_TRACKING_URI = "http://mlflow:5000"  # Replace with the correct MLflow tracking URI
@@ -56,12 +61,13 @@ class MLModelDeployment:
         :param request: A dictionary containing the "data" key with input data.
         :return: A dictionary with predictions or an error message.
         """
-        data = request.get("data")
+        data = await request.json()
+        data = data.pop("data", {})
         if data is None:
             return {"error": "No data provided for prediction."}
 
         # Convert data to DataFrame for the model
-        input_data = pd.DataFrame(data)
+        input_data = np.asarray(data)
         predictions = self.model.predict(input_data)
 
         return {"predictions": predictions.tolist()}
@@ -69,13 +75,15 @@ class MLModelDeployment:
 
 if __name__ == "__main__":
     # Initialize Ray
-    ray.init()
+    ray.init(include_dashboard=True, dashboard_host="0.0.0.0", dashboard_port=8265)
 
     # Start Ray Serve
-    serve.start()
+    serve.start(http_options={"host": "0.0.0.0", "port": 8000})
 
     # Deploy the MLflow model
     deployment = MLModelDeployment.bind(EXPERIMENT_NAME)
     serve.run(deployment)
 
-    print("Ray Serve is running at http://127.0.0.1:8000")
+    import time
+    while True:
+        time.sleep(3600)
