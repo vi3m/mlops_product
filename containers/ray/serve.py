@@ -4,12 +4,14 @@ from ray import serve
 import numpy as np
 import ray
 
-os.environ['MLFLOW_S3_ENDPOINT_URL']="http://minio:9000"
-os.environ['AWS_ACCESS_KEY_ID']="minio"
-os.environ['AWS_SECRET_ACCESS_KEY']="minio123"
+os.environ["MLFLOW_S3_ENDPOINT_URL"] = "http://minio:9000"
+os.environ["AWS_ACCESS_KEY_ID"] = "minio"
+os.environ["AWS_SECRET_ACCESS_KEY"] = "minio123"
 
 # Constants for MLflow
-MLFLOW_TRACKING_URI = "http://mlflow:5000"  # Replace with the correct MLflow tracking URI
+MLFLOW_TRACKING_URI = (
+    "http://mlflow:5000"  # Replace with the correct MLflow tracking URI
+)
 EXPERIMENT_NAME = "Diabetes Regression Experiment"  # Replace with your experiment name
 
 
@@ -35,7 +37,9 @@ def get_latest_model_uri(experiment_name):
     )
 
     if runs.empty:
-        raise ValueError(f"No successful runs found for experiment '{experiment_name}'.")
+        raise ValueError(
+            f"No successful runs found for experiment '{experiment_name}'."
+        )
 
     # Extract the latest run's artifact URI
     latest_run_id = runs.iloc[0]["run_id"]
@@ -48,11 +52,8 @@ class MLModelDeployment:
         """
         Initializes the deployment by loading the latest MLflow model for the experiment.
         """
-        # Fetch the latest model URI
         model_uri = get_latest_model_uri(experiment_name)
         print(f"Deploying model from URI: {model_uri}")
-
-        # Load the model from MLflow
         self.model = mlflow.pyfunc.load_model(model_uri)
 
     async def __call__(self, request: dict):
@@ -66,7 +67,6 @@ class MLModelDeployment:
         if data is None:
             return {"error": "No data provided for prediction."}
 
-        # Convert data to DataFrame for the model
         input_data = np.asarray(data)
         predictions = self.model.predict(input_data)
 
@@ -74,16 +74,13 @@ class MLModelDeployment:
 
 
 if __name__ == "__main__":
-    # Initialize Ray
     ray.init(include_dashboard=True, dashboard_host="0.0.0.0", dashboard_port=8265)
-
-    # Start Ray Serve
     serve.start(http_options={"host": "0.0.0.0", "port": 8000})
 
-    # Deploy the MLflow model
     deployment = MLModelDeployment.bind(EXPERIMENT_NAME)
     serve.run(deployment)
 
     import time
+
     while True:
         time.sleep(3600)
