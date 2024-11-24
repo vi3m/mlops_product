@@ -1,0 +1,82 @@
+{
+    "python.analysis.autoImportCompletions": true,
+    "python.analysis.fixAll": [
+        "source.unusedImports"
+    ],
+    "editor.defaultFormatter": null,
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/.cache": true,
+        "**/.coverage": true,
+        "**/.coverage.*": true,
+        "**/.hypothesis": true,
+        "**/.mypy_cache": true,
+        "**/.nox": true,
+        "**/.pytest_cache": true,
+        "**/.ruff_cache": true,
+        "**/.tox": true
+    },
+    "workbench.tree.indent": 24,
+    "editor.fontFamily": "'Jetbrains Mono','Fira Code', Consolas, 'Courier New', monospace",
+    "workbench.colorTheme": "Horizon Default",
+    "python.defaultInterpreterPath": "C:\\Users\\ViHa\\miniconda3\\python.exe",
+    "workbench.startupEditor": "none",
+    "files.associations": {
+        "MLTable": "yaml",
+        ".env*": "dotenv"
+    },
+    "editor.tokenColorCustomizations": {
+        "textMateRules": [
+            {
+                "scope": "keyword.other.dotenv",
+                "settings": {
+                    "foreground": "#FF000000"
+                }
+            }
+        ],
+        "[Cold*][Horizon Default]": {
+            "comments": "#BBBBBB4D"
+        }
+    },
+    "editor.fontLigatures": true,
+    "workbench.sideBar.location": "right",
+    "git.autofetch": true,
+    "editor.stickyScroll.defaultModel": "indentationModel",
+    "editor.minimap.showSlider": "always",
+    "editor.minimap.renderCharacters": false,
+    "[json]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    },
+    "redhat.telemetry.enabled": false,
+    "[yaml]": {
+        "editor.defaultFormatter": "redhat.vscode-yaml"
+    },
+    "git.confirmSync": false,
+    "yaml.schemas": {
+        "file:///c%3A/Users/ViHa/.vscode/extensions/docsmsft.docs-yaml-1.0.5/dist/toc.schema.json": "/toc\\.yml/i"
+    },
+    "workbench.iconTheme": "material-icon-theme",
+    "workbench.colorCustomizations": {
+        "[Cold*][Horizon Default]": {
+            "editor.background": "#1c1e26",
+            "editor.findMatchBackground": "#6c6f9380",
+            "editor.findMatchHighlightBackground": "#6c6f934d",
+            "editor.findRangeHighlightBackground": "#6c6f931a",
+            "editor.hoverHighlightBackground": "#6c6f934d",
+            "editor.lineHighlightBackground": "#2e303e4d",
+            "editor.rangeHighlightBackground": "#2e303e80",
+            "editor.selectionBackground": "#2e303eb3",
+            "editor.selectionHighlightBackground": "#6c6f934d",
+            "editor.wordHighlightBackground": "#6c6f9380",
+            "editor.wordHighlightStrongBackground": "#6c6f9380",
+            "editorLineNumber.activeForeground": "#d5d8da80",
+            "editorLineNumber.foreground": "#d5d8da1a"
+        }
+    },
+    "editor.semanticHighlighting.enabled": "configuredByTheme",
+    "editor.minimap.maxColumn": 60,
+    "editor.minimap.size": "fill",
+    "[python]": {
+        "editor.defaultFormatter": "charliermarsh.ruff"
+    }
+}
